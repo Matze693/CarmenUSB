@@ -37,6 +37,12 @@ __TABLE = [0x0000, 0x8005, 0x800F, 0x000A, 0x801B, 0x001E, 0x0014, 0x8011,
 
 
 def calculate_crc16(data: List[int]) -> int:
+    """
+    Calculates a CRC16 for the given data.
+
+    :param data: Data to calculate a CRC16.
+    :return: Calculated CRC16.
+    """
     crc = 0xFFFF
     for d in data:
         crc = (__TABLE[((crc >> 8) ^ d) & 0xFF] ^ (crc << 8)) & 0xFFFF

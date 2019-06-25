@@ -8,7 +8,7 @@ class Carmen(object):
     def __init__(self, communication: CarmenCommunication) -> None:
         self._communication = communication
 
-    def _send_simple_command(self, command: int, size: int) -> Tuple[bool, List[int]]:
+    def _execute_simple_command(self, command: int, size: int) -> Tuple[bool, List[int]]:
         data = []
         success = self._communication.send(command)
         if success:
@@ -21,16 +21,16 @@ class Carmen(object):
         return success, data
 
     def stop_dsp(self) -> Tuple[bool, List[int]]:
-        return self._send_simple_command(0xA0, 4)
+        return self._execute_simple_command(0xA0, 4)
 
     def continue_dsp(self) -> Tuple[bool, List[int]]:
-        return self._send_simple_command(0xA1, 4)
+        return self._execute_simple_command(0xA1, 4)
 
     def soft_reset(self) -> Tuple[bool, List[int]]:
-        return self._send_simple_command(0x5A, 4)
+        return self._execute_simple_command(0x5A, 4)
 
     def read_measurement_frame1(self) -> Tuple[bool, List[int]]:
-        return self._send_simple_command(0x35, 13)
+        return self._execute_simple_command(0x35, 13)
 
     def read_eeprom(self, address: int, size: int = 1) -> Tuple[bool, List[int]]:
         command = 0x03

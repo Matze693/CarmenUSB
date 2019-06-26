@@ -29,3 +29,11 @@ if success:
     print('{}'.format(typeplate))
 else:
     print('Cannot read typeplate!')
+
+success, pressure, temperature, status = carmen.read_measurement()
+if success:
+    print('   Pressure: {: 8.4f} {}'.format(pressure, typeplate.xRV_1_Unit))
+    print('Temperature: {: 8.4f} {}'.format(temperature, typeplate.xRV_2_Unit))
+    print('     Status: 0x{:06X}'.format(status))
+else:
+    print('Cannot read measurement')

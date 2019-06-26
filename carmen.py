@@ -1,7 +1,7 @@
 import logging
 from typing import List, Tuple
 
-from carmen_utils import CarmenTypeplate, analyse_typeplate
+from carmen_utils import CarmenTypeplate, analyse_typeplate, convert_digout
 from carmen_communication import CarmenCommunication
 
 
@@ -17,6 +17,7 @@ class Carmen(object):
         :param communication: Communication for the Carmen sensor.
         """
         self._communication = communication
+        self._typeplate = None
 
     def _execute_simple_command(self, command: int, size: int) -> Tuple[bool, List[int]]:
         """
@@ -113,5 +114,32 @@ class Carmen(object):
             success, response = self.read_eeprom(0x0190, 12)
             if success:
                 success, typeplate = analyse_typeplate(response[3:-2])
+                if success:
+                    self._typeplate = typeplate
         _, _ = self.continue_dsp()
         return success, typeplate
+
+    def read_measurement(self) -> Tuple[bool, float, float, int]:
+        """
+        Reads a measurement (pressure, temperature, status) from the Carmen sensor.
+
+        :return: True on success, else false.
+        :return: Pressure value.
+        :return: Temperature value.
+        :return: Actual status.
+        """
+        pressure = 0.0
+        temperature = 0.0
+        status = 0xFFFFFF
+        success = True
+        if self._typeplate is None:
+            success, _ = self.read_typeplate()
+        if success:
+            success, data = self.read_measurement_frame1()
+            if success:
+                pressure_value = data[1] | (data[2] << 8) | (data[3] << 16)
+                pressure = convert_digout(pressure_value, 24, self._typeplate.LRV_1, self._typeplate.URV_1)
+                temperature_value = data[4] | (data[5] << 8)
+                temperature = convert_digout(temperature_value, 16, self._typeplate.LRV_2, self._typeplate.URV_2, 25)
+                status = data[8] | (data[9] << 8) | (data[10] << 16)
+        return success, pressure, temperature, status

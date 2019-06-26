@@ -76,6 +76,8 @@ class Carmen(object):
         """
         Executes the command "Read EEPROM".
 
+        :param address: Start address to read from EEPROM.
+        :param size: Block size to read.
         :return: True on success, else false.
         :return: The received data.
         """

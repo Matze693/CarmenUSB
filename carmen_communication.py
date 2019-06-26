@@ -1,3 +1,4 @@
+import logging
 from typing import List, Tuple
 from serial import Serial
 
@@ -28,7 +29,9 @@ class CarmenCommunication(object):
 
         # check if serial is open
         if not self.__serial.is_open:
-            raise IOError('Cannot open serial {}'.format(serial.name))
+            raise IOError('Cannot open serial "{}"'.format(serial.name))
+
+        logging.info('serial "{}" is open'.format(self.__serial.name))
 
     def __del__(self) -> None:
         """
@@ -43,7 +46,7 @@ class CarmenCommunication(object):
         :param data: Date to send.
         :return: True on success, else false.
         """
-        print('send -> {}'.format(' '.join('0x{:02X}'.format(x) for x in data)))
+        logging.info('send -> {}'.format(' '.join('0x{:02X}'.format(x) for x in data)))
         written_bytes_len = self.__serial.write(bytes(data))
         return written_bytes_len == len(data)
 
@@ -70,10 +73,10 @@ class CarmenCommunication(object):
         :return: The received data.
         """
         data = list(self.__serial.read(size))
-        print('read <- {}'.format(' '.join('0x{:02X}'.format(x) for x in data)))
+        logging.info('read <- {}'.format(' '.join('0x{:02X}'.format(x) for x in data)))
         success = size == len(data)
         if not success:
-            print('!!!!! READ TIMEOUT !!!!!')
+            logging.error('read timeout after {} s'.format(self.__serial.timeout))
             data = []
         return success, data
 
@@ -91,5 +94,5 @@ class CarmenCommunication(object):
             # check crc
             success = calculate_crc16(data[:-2]) == (data[-2] + (data[-1] << 8))
             if not success:
-                print('!!!!! INVALID CRC !!!!!')
+                logging.error('invalid crc')
         return success, data

@@ -66,11 +66,11 @@ class CarmenTypeplate(object):
         result = '---------- Typeplate Information ----------\n'
         result += 'TypeplateType: {}\n'.format(self.TypeplateType)
         result += ' SerialNumber: {}\n'.format(self.SerialNumber)
-        result += '      DigOut1: {} ... {} {}\n'.format(self.LRV_1, self.URV_1, self.xRV_1_Unit)
-        result += '      DigOut2: {} ... {} {}\n'.format(self.LRV_2, self.URV_2, self.xRV_2_Unit)
-        result += '      DigOut3: {} ... {} {}\n'.format(self.LRV_3, self.URV_3, self.xRV_3_Unit)
-        result += '          MWP: {} {}\n'.format(self.MWP, self.MWP_Unit)
-        result += '          OPL: {} {}\n'.format(self.OPL, self.OPL_Unit)
+        result += '      DigOut1: {: 6.2f} ... {: 6.2f} {}\n'.format(self.LRV_1, self.URV_1, self.xRV_1_Unit)
+        result += '      DigOut2: {: 6.2f} ... {: 6.2f} {}\n'.format(self.LRV_2, self.URV_2, self.xRV_2_Unit)
+        result += '      DigOut3: {: 6.2f} ... {: 6.2f} {}\n'.format(self.LRV_3, self.URV_3, self.xRV_3_Unit)
+        result += '          MWP: {: 6.2f} {}\n'.format(self.MWP, self.MWP_Unit)
+        result += '          OPL: {: 6.2f} {}\n'.format(self.OPL, self.OPL_Unit)
         result += '   SystemRate: {}\n'.format(self.SystemRate)
         result += ' DateModified: {}\n'.format(self.DateModified)
         return result

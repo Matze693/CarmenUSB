@@ -109,24 +109,3 @@ class Carmen(object):
                 success, typeplate = analyse_typeplate(response[3:-2])
         _, _ = self.continue_dsp()
         return success, typeplate
-
-    def read_serial_number(self) -> Tuple[bool, str]:
-        """
-        Reads the serial number from the Carmen sensor.
-
-        :return: True on success, else false.
-        :return: The read serial number.
-        """
-        serial_number = ''
-        success, _ = self.stop_dsp()
-        if success:
-            success, response = self.read_eeprom(0x0190, 3)
-            if success:
-                response = response[3:-2]
-                buffer = [response[3], response[2], response[1],
-                          response[7], response[6], response[5], response[4],
-                          response[11], response[10], response[9], response[8]]
-                serial_number = ''.join(chr(c) for c in buffer)
-        _, _ = self.continue_dsp()
-
-        return success, serial_number

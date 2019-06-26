@@ -2,6 +2,7 @@ import struct
 from enum import Enum
 from typing import List, Tuple
 from datetime import date
+from unittest import TestCase
 
 
 class Units(Enum):
@@ -129,3 +130,31 @@ def analyse_typeplate(buffer: List[int]) -> Tuple[bool, CarmenTypeplate]:
     day = (date_buffer & 0x001F)
     info.DateModified = date(year + 2000, month, day)
     return True, info
+
+
+def convert_digout(value: int, bits: int, lrv: float, urv: float, offset: float = 0.0):
+    """
+    Converts a digital output value (fixed point format) into float value corresponding to the given limits.
+
+    :param value: Digital output value.
+    :param bits: Number of bits used in the fixed point format.
+    :param lrv: Lower range limit.
+    :param urv: Upper range limit.
+    :param offset: Zero offset. Default is 0.0.
+    :return: Float value.
+    """
+    # calculate scaling limits
+    dig_min = 0.25 * (lrv - offset) / max(abs(lrv - offset), abs(urv - offset))
+    dig_max = 0.25 * (urv - offset) / max(abs(lrv - offset), abs(urv - offset))
+    # check if negative
+    if value & (1 << (bits - 1)):
+        value = ((~value + 1) & (2**bits - 1)) * -1
+    fixed_point = value / (2**bits)
+    return (urv - lrv) * fixed_point / (dig_max - dig_min) + offset
+
+
+class __TestCarmenUtils(TestCase):
+
+    def test_convert_digout(self):
+        self.assertAlmostEqual(-0.170959, convert_digout(0xFA8782, 24, -1, 2), 5)
+        self.assertAlmostEqual(23.925781, convert_digout(0xFEC0, 16, -20, 80, offset=25), 5)

@@ -1,5 +1,4 @@
 from typing import List
-from unittest import TestCase
 
 
 __TABLE = [0x0000, 0x8005, 0x800F, 0x000A, 0x801B, 0x001E, 0x0014, 0x8011,
@@ -49,15 +48,4 @@ def calculate_crc16(data: List[int]) -> int:
     return crc
 
 
-class __TestCRC16(TestCase):
 
-    def test_calculate_crc16(self):
-        test_data = {0xA0: 0xFEC2,
-                     0xA1: 0x7EC7,
-                     0x5A: 0xFCDE,
-                     0x35: 0xFDBC}
-
-        for data, crc in test_data.items():
-            if not isinstance(data, List):
-                data = [data]
-            self.assertEqual(calculate_crc16(data), crc)

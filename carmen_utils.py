@@ -2,7 +2,6 @@ import struct
 from enum import Enum
 from typing import List, Tuple
 from datetime import date
-from unittest import TestCase
 
 
 class Units(Enum):
@@ -151,10 +150,3 @@ def convert_digout(value: int, bits: int, lrv: float, urv: float, offset: float 
         value = ((~value + 1) & (2**bits - 1)) * -1
     fixed_point = value / (2**bits)
     return (urv - lrv) * fixed_point / (dig_max - dig_min) + offset
-
-
-class __TestCarmenUtils(TestCase):
-
-    def test_convert_digout(self):
-        self.assertAlmostEqual(-0.170959, convert_digout(0xFA8782, 24, -1, 2), 5)
-        self.assertAlmostEqual(23.925781, convert_digout(0xFEC0, 16, -20, 80, offset=25), 5)

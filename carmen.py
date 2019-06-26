@@ -1,5 +1,6 @@
 from typing import List, Tuple
 
+from carmen_utils import CarmenTypeplate, analyse_typeplate
 from carmen_communication import CarmenCommunication
 
 
@@ -92,6 +93,22 @@ class Carmen(object):
                     response = []
                     print('!!!!! INVALID ANSWER !!!!!')
         return success, response
+
+    def read_typeplate(self) -> Tuple[bool, CarmenTypeplate]:
+        """
+        Reads the typeplate information.
+
+        :return: True on success, else false.
+        :return: Typeplate information.
+        """
+        typeplate = CarmenTypeplate()
+        success, _ = self.stop_dsp()
+        if success:
+            success, response = self.read_eeprom(0x0190, 12)
+            if success:
+                success, typeplate = analyse_typeplate(response[3:-2])
+        _, _ = self.continue_dsp()
+        return success, typeplate
 
     def read_serial_number(self) -> Tuple[bool, str]:
         """

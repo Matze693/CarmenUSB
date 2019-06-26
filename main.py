@@ -7,8 +7,8 @@ ser = Serial('/dev/tty.usbserial-AH3Z6ZWF')
 communication = CarmenCommunication(ser)
 carmen = Carmen(communication)
 
-success, serial_number = carmen.read_serial_number()
+success, typeplate = carmen.read_typeplate()
 if success:
-    print('Serial Number: {}'.format(serial_number))
+    print('{}'.format(typeplate))
 else:
-    print('Cannot read Serial Number!')
+    print('Cannot read typeplate!')

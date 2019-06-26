@@ -25,16 +25,16 @@ class Carmen(object):
         :return: True on success, else false.
         :return: The received data.
         """
-        data = []
+        response = []
         success = self._communication.send(command)
         if success:
-            success, data = self._communication.receive(size)
+            success, response = self._communication.receive(size)
             if success:
-                success = data[0] == command
+                success = response[0] == command
                 if not success:
-                    data = []
+                    response = []
                     print('!!!!! INVALID ANSWER !!!!!')
-        return success, data
+        return success, response
 
     def stop_dsp(self) -> Tuple[bool, List[int]]:
         """
@@ -82,16 +82,16 @@ class Carmen(object):
         :return: The received data.
         """
         command = 0x03
-        data = []
+        response = []
         success = self._communication.send(command, [address >> 8, address & 0xFF, size])
         if success:
-            success, data = self._communication.receive(size * 4 + 5)
+            success, response = self._communication.receive(size * 4 + 5)
             if success:
-                success = data[0] == command and data[2] == size
+                success = response[0] == command and response[2] == size
                 if not success:
-                    data = []
+                    response = []
                     print('!!!!! INVALID ANSWER !!!!!')
-        return success, data
+        return success, response
 
     def read_serial_number(self) -> Tuple[bool, str]:
         """
@@ -103,12 +103,12 @@ class Carmen(object):
         serial_number = ''
         success, _ = self.stop_dsp()
         if success:
-            success, data = self.read_eeprom(0x0190, 3)
+            success, response = self.read_eeprom(0x0190, 3)
             if success:
-                data = data[3:-2]
-                buffer = [data[3], data[2], data[1],
-                          data[7], data[6], data[5], data[4],
-                          data[11], data[10], data[9], data[8]]
+                response = response[3:-2]
+                buffer = [response[3], response[2], response[1],
+                          response[7], response[6], response[5], response[4],
+                          response[11], response[10], response[9], response[8]]
                 serial_number = ''.join(chr(c) for c in buffer)
         _, _ = self.continue_dsp()
 

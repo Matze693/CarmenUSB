@@ -84,7 +84,8 @@ def analyse_typeplate(buffer: List[int]) -> Tuple[bool, CarmenTypeplate]:
     :return: True on success, else false.
     :return: Typeplate information.
     """
-    def encode_short_IEEE(data: List[int]) -> float:
+
+    def encode_short_ieee(data: List[int]) -> float:
         """
         Encodes a short IEEE data to a floating point number.
 
@@ -104,22 +105,22 @@ def analyse_typeplate(buffer: List[int]) -> Tuple[bool, CarmenTypeplate]:
     info.SerialNumber = ''.join(chr(c) for c in serial_number_buffer)
     # dig1
     info.xRV_1_Unit = Units(buffer[12])
-    info.LRV_1 = encode_short_IEEE(buffer[13:16])
-    info.URV_1 = encode_short_IEEE(buffer[17:20])
+    info.LRV_1 = encode_short_ieee(buffer[13:16])
+    info.URV_1 = encode_short_ieee(buffer[17:20])
     # dig2
     info.xRV_2_Unit = Units(buffer[20])
-    info.LRV_2 = encode_short_IEEE(buffer[21:24])
-    info.URV_2 = encode_short_IEEE(buffer[25:28])
+    info.LRV_2 = encode_short_ieee(buffer[21:24])
+    info.URV_2 = encode_short_ieee(buffer[25:28])
     # dig3
     info.xRV_3_Unit = Units(buffer[28])
-    info.LRV_3 = encode_short_IEEE(buffer[29:32])
-    info.URV_3 = encode_short_IEEE(buffer[33:36])
+    info.LRV_3 = encode_short_ieee(buffer[29:32])
+    info.URV_3 = encode_short_ieee(buffer[33:36])
     # MWP
     info.MWP_Unit = Units(buffer[36])
-    info.MWP = encode_short_IEEE(buffer[37:40])
+    info.MWP = encode_short_ieee(buffer[37:40])
     # OPL
     info.OPL_Unit = Units(buffer[40])
-    info.OPL = encode_short_IEEE(buffer[41:44])
+    info.OPL = encode_short_ieee(buffer[41:44])
     # system rate
     info.SystemRate = SystemRate(buffer[32] & 0x0007)
     # date modified

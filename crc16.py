@@ -46,6 +46,3 @@ def calculate_crc16(data: List[int]) -> int:
     for d in data:
         crc = (__TABLE[((crc >> 8) ^ d) & 0xFF] ^ (crc << 8)) & 0xFFFF
     return crc
-
-
-

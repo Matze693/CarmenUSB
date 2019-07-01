@@ -1,63 +1,11 @@
 import logging
-from abc import ABCMeta, abstractmethod
 from typing import List, Tuple
 from serial import Serial
 
 from crc16 import calculate_crc16
 
 
-class CommunicationBase(metaclass=ABCMeta):
-    """
-    Base class for the communication to the Carmen sensor.
-    """
-
-    @abstractmethod
-    def _send_raw(self, data: List[int]) -> bool:
-        """
-        Sends the given data to the Carmen sensor.
-
-        :param data: Date to send.
-        :return: True on success, else false.
-        """
-        raise NotImplementedError()
-
-    @abstractmethod
-    def _receive_raw(self, size: int) -> Tuple[bool, List[int]]:
-        """
-        Receives data from the Carmen sensor.
-
-        :param size: Number of bytes to receive.
-        :return: True on success, else false.
-        :return: The received data.
-        """
-        raise NotImplementedError()
-
-    @abstractmethod
-    def send(self, command: int, data: List[int] = None) -> bool:
-        """
-        Sends a command with the given data to the Carmen sensor.
-        The CRC16 is calculated and appended.
-
-        :param command: Command to send.
-        :param data: Data to send if necessary. Default ist None.
-        :return: True on success, else false.
-        """
-        raise NotImplementedError()
-
-    @abstractmethod
-    def receive(self, size: int) -> Tuple[bool, List[int]]:
-        """
-        Receives data from the Carmen sensor.
-        The CRC16 is checked.
-
-        :param size:
-        :return: True on success, else false.
-        :return: The received data.
-        """
-        raise NotImplementedError()
-
-
-class CommunicationCarmen(CommunicationBase):
+class CommunicationCarmen(object):
     """
     Simple class to handle the communication to the Carmen sensor.
     """

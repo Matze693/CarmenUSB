@@ -39,7 +39,7 @@ class CarmenCommunication(object):
         """
         self.__serial.close()
 
-    def __send(self, data: List[int]) -> bool:
+    def _send_raw(self, data: List[int]) -> bool:
         """
         Sends the given data to the Carmen sensor.
 
@@ -62,9 +62,9 @@ class CarmenCommunication(object):
         if data is None:
             data = []
         crc = calculate_crc16([command] + data)
-        return self.__send([command] + data + [crc & 0xFF, crc >> 8])
+        return self._send_raw([command] + data + [crc & 0xFF, crc >> 8])
 
-    def __receive(self, size: int) -> Tuple[bool, List[int]]:
+    def _receive_raw(self, size: int) -> Tuple[bool, List[int]]:
         """
         Receives data from the Carmen sensor.
 
@@ -89,7 +89,7 @@ class CarmenCommunication(object):
         :return: True on success, else false.
         :return: The received data.
         """
-        success, data = self.__receive(size)
+        success, data = self._receive_raw(size)
         if success:
             # check crc
             success = calculate_crc16(data[:-2]) == (data[-2] + (data[-1] << 8))

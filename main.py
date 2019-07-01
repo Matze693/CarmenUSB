@@ -1,7 +1,7 @@
 import logging
 from serial import Serial
 
-from carmen_communication import CarmenCommunication
+from carmen_communication import CommunicationCarmen
 from carmen import Carmen
 
 # constants
@@ -21,7 +21,7 @@ logging.basicConfig(level=logging.NOTSET,
 
 
 ser = Serial('/dev/tty.usbserial-AH3Z6ZWF')
-communication = CarmenCommunication(ser)
+communication = CommunicationCarmen(ser)
 carmen = Carmen(communication)
 
 success, typeplate = carmen.read_typeplate()

@@ -2,7 +2,7 @@ import logging
 from typing import List, Tuple
 
 from carmen_utils import CarmenTypeplate, analyse_typeplate, convert_digout
-from carmen_communication import CarmenCommunication
+from carmen_communication import CommunicationCarmen
 
 
 class Carmen(object):
@@ -10,7 +10,7 @@ class Carmen(object):
     Simple class to handle the Carmen sensor functions.
     """
 
-    def __init__(self, communication: CarmenCommunication) -> None:
+    def __init__(self, communication: CommunicationCarmen) -> None:
         """
         Initializes a instance of Carmen.
 

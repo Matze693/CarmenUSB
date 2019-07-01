@@ -7,6 +7,9 @@ from crc16 import calculate_crc16
 
 
 class CommunicationBase(metaclass=ABCMeta):
+    """
+    Base class for the communication to the Carmen sensor.
+    """
 
     @abstractmethod
     def _send_raw(self, data: List[int]) -> bool:

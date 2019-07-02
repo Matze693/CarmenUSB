@@ -1,7 +1,7 @@
 import struct
+from datetime import date
 from enum import Enum
 from typing import List, Tuple
-from datetime import date
 
 
 class Units(Enum):
@@ -148,6 +148,6 @@ def convert_digout(value: int, bits: int, lrv: float, urv: float, offset: float 
     dig_max = 0.25 * (urv - offset) / max(abs(lrv - offset), abs(urv - offset))
     # check if negative
     if value & (1 << (bits - 1)):
-        value = ((~value + 1) & (2**bits - 1)) * -1
-    fixed_point = value / (2**bits)
+        value = ((~value + 1) & (2 ** bits - 1)) * -1
+    fixed_point = value / (2 ** bits)
     return (urv - lrv) * fixed_point / (dig_max - dig_min) + offset

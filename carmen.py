@@ -1,8 +1,8 @@
 import logging
 from typing import List, Tuple
 
-from carmen_utils import CarmenTypeplate, analyse_typeplate, convert_digout
 from carmen_communication import CommunicationCarmen
+from carmen_utils import CarmenTypeplate, analyse_typeplate, convert_digout
 
 
 class Carmen(object):

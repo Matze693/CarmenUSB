@@ -2,10 +2,9 @@ import logging
 from unittest import TestCase
 from unittest.mock import Mock
 
+from carmen_communication import CommunicationCarmen
 from carmen_utils import convert_digout
 from crc16 import calculate_crc16
-from carmen_communication import CommunicationCarmen
-
 
 # disable logging output
 logging.disable()
@@ -31,7 +30,7 @@ class __TestCRC16(TestCase):
                 data = [data]
             self.assertEqual(crc, calculate_crc16(data))
 
-        self.assertEqual(0xCD9F, calculate_crc16([0x35, 0x85, 0x0C, 0x00, 0xCE, 0xFD, 0xCF, 0xF2 , 0x00, 0x00, 0x80]))
+        self.assertEqual(0xCD9F, calculate_crc16([0x35, 0x85, 0x0C, 0x00, 0xCE, 0xFD, 0xCF, 0xF2, 0x00, 0x00, 0x80]))
 
 
 class __TestCommunicationCarmen(TestCase):

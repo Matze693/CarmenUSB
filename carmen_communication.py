@@ -1,5 +1,6 @@
 import logging
 from typing import List, Tuple
+
 from serial import Serial
 
 from crc16 import calculate_crc16

@@ -35,11 +35,16 @@ class __TestCRC16(TestCase):
 
 class __TestCommunicationCarmen(TestCase):
 
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.serial = Mock()
+
     def setUp(self) -> None:
-        self.serial = Mock()
+        self.serial.is_open = True
+        self.serial.write = Mock(side_effect=lambda x: len(x))
+        self.serial.read = Mock(side_effect=lambda x: [0] * x)
 
     def test___init__(self):
-        self.serial.is_open = True
         self.assertIsNotNone(CommunicationCarmen(self.serial))
 
         self.serial.is_open = False
@@ -50,7 +55,6 @@ class __TestCommunicationCarmen(TestCase):
         data = [0] * 10
         c = CommunicationCarmen(self.serial)
 
-        self.serial.write = Mock(side_effect=lambda x: len(x))
         self.assertTrue(c._send_raw(data))
 
         self.serial.write = Mock(side_effect=lambda x: len(x) + 1)
@@ -61,7 +65,6 @@ class __TestCommunicationCarmen(TestCase):
         data = [0] * 10
         c = CommunicationCarmen(self.serial)
 
-        self.serial.write = Mock(side_effect=lambda x: len(x))
         self.assertTrue(c.send(cmd, data))
 
         self.serial.write = Mock(side_effect=lambda x: len(x) + 1)
@@ -71,7 +74,6 @@ class __TestCommunicationCarmen(TestCase):
         data_length = 10
         c = CommunicationCarmen(self.serial)
 
-        self.serial.read = Mock(side_effect=lambda x: [0] * x)
         success, data = c._receive_raw(data_length)
         self.assertTrue(success)
         self.assertEqual(data_length, len(data))

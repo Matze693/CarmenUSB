@@ -1,7 +1,9 @@
 import logging
+from typing import List, Tuple
 from unittest import TestCase
 from unittest.mock import Mock
 
+from carmen import Carmen
 from carmen_communication import CommunicationCarmen
 from carmen_utils import convert_digout
 from crc16 import calculate_crc16
@@ -104,5 +106,113 @@ class __TestCommunicationCarmen(TestCase):
 
         self.serial.read = Mock(side_effect=lambda x: [0] * (x - 1))
         success, data = c.receive(data_length)
+        self.assertFalse(success)
+        self.assertEqual(0, len(data))
+
+
+class __TestCarmen(TestCase):
+    __valid_responses = {0xA0: [0xA0, 0x80, 0x04, 0xC3],
+                         0xA1: [0xA1, 0x80, 0x07, 0x45],
+                         0x5A: [0x5A, 0x80, 0x0B, 0x5F],
+                         0x35: [0x35, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80, 0x6E, 0x5F]}
+
+    def mock_send(self, command: int, data: List[int] = None) -> bool:
+        self.__received_command = command
+        self.__received_data = data
+        return True
+
+    def mock_receive(self, _: int) -> Tuple[bool, List[int]]:
+        data = None
+        if self.__received_data:
+            if self.__received_command == 0x03:
+                data = [0x03, 0x80, self.__received_data[2]] + [0x00] * self.__received_data[2] * 4
+                crc = calculate_crc16(data)
+                data += [crc & 0xFF, crc >> 8]
+        else:
+            data = self.__valid_responses[self.__received_command]
+        return True, data
+
+    def mock_receive_invalid(self, size: int) -> Tuple[bool, List[int]]:
+        return True, [-0x01] * size
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.communication = Mock()
+
+    def setUp(self) -> None:
+        self.communication.send = Mock(side_effect=self.mock_send)
+        self.communication.receive = Mock(side_effect=self.mock_receive)
+
+    def test__execute_simple_command(self):
+        c = Carmen(self.communication)
+
+        success, data = c._execute_simple_command(0xA0, 4)
+        self.assertTrue(success)
+        self.assertEqual(4, len(data))
+
+        self.communication.receive = Mock(side_effect=self.mock_receive_invalid)
+        success, data = c._execute_simple_command(0xA0, 4)
+        self.assertFalse(success)
+        self.assertEqual(0, len(data))
+
+    def test_stop_dsp(self):
+        c = Carmen(self.communication)
+
+        success, data = c.stop_dsp()
+        self.assertTrue(success)
+        self.assertEqual(4, len(data))
+
+        self.communication.receive = Mock(side_effect=self.mock_receive_invalid)
+        success, data = c.stop_dsp()
+        self.assertFalse(success)
+        self.assertEqual(0, len(data))
+
+    def test_continue_dsp(self):
+        c = Carmen(self.communication)
+
+        success, data = c.continue_dsp()
+        self.assertTrue(success)
+        self.assertEqual(4, len(data))
+
+        self.communication.receive = Mock(side_effect=self.mock_receive_invalid)
+        success, data = c.continue_dsp()
+        self.assertFalse(success)
+        self.assertEqual(0, len(data))
+
+    def test_soft_reset(self):
+        c = Carmen(self.communication)
+
+        success, data = c.soft_reset()
+        self.assertTrue(success)
+        self.assertEqual(4, len(data))
+
+        self.communication.receive = Mock(side_effect=self.mock_receive_invalid)
+        success, data = c.soft_reset()
+        self.assertFalse(success)
+        self.assertEqual(0, len(data))
+
+    def test_read_measurement_frame1(self):
+        c = Carmen(self.communication)
+
+        success, data = c.read_measurement_frame1()
+        self.assertTrue(success)
+        self.assertEqual(13, len(data))
+
+        self.communication.receive = Mock(side_effect=self.mock_receive_invalid)
+        success, data = c.read_measurement_frame1()
+        self.assertFalse(success)
+        self.assertEqual(0, len(data))
+
+    def test_read_eeprom(self):
+        start = 0x123
+        size = 2
+        c = Carmen(self.communication)
+
+        success, data = c.read_eeprom(start, size)
+        self.assertTrue(success)
+        self.assertEqual(5 + 4 * size, len(data))
+
+        self.communication.receive = Mock(side_effect=self.mock_receive_invalid)
+        success, data = c.read_eeprom(start, size)
         self.assertFalse(success)
         self.assertEqual(0, len(data))

@@ -1,9 +1,14 @@
+import logging
 from unittest import TestCase
 from unittest.mock import Mock
 
 from carmen_utils import convert_digout
 from crc16 import calculate_crc16
 from carmen_communication import CommunicationCarmen
+
+
+# disable logging output
+logging.disable()
 
 
 class __TestCarmenUtils(TestCase):
